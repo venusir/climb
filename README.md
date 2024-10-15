@@ -21,7 +21,76 @@ echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
 sysctl -p
 ```
 
-### Nginx
+### 安装Cloudreve
+
+* 下载 mosdns
+
+```
+wget -O cloudreve_3.8.3_linux_amd64.tar.gz https://github.com/cloudreve/Cloudreve/releases/download/3.8.3/cloudreve_3.8.3_linux_amd64.tar.gz
+```
+
+* 解压获取到的主程序
+
+```
+tar -zxvf cloudreve_3.8.3_linux_amd64.tar.gz
+```
+
+* 移动可执行文件
+
+```
+mv cloudreve /usr/bin/
+```
+
+* 获取可执行权限
+
+```
+chmod +x /usr/bin/cloudreve
+```
+
+* 编辑配置文件
+
+```
+nano /usr/lib/systemd/system/cloudreve.service
+```
+
+* 编辑文件
+
+```
+[Unit]
+Description=Cloudreve
+Documentation=https://docs.cloudreve.org
+After=network.target
+After=mysqld.service
+Wants=network.target
+
+[Service]
+WorkingDirectory=/usr/bin
+ExecStart=/usr/bin/cloudreve
+Restart=on-abnormal
+RestartSec=5s
+KillMode=mixed
+
+StandardOutput=null
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target
+```
+
+* 服务管理
+
+```
+# 更新配置
+systemctl daemon-reload
+
+# 启动服务
+systemctl start cloudreve
+
+# 设置开机启动
+systemctl enable cloudreve
+```
+
+### 安装Nginx
 
 * 安装nginx
 
