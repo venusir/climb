@@ -1,18 +1,18 @@
 # Server
 
-* ¸üĞÂÈí¼şÔ´
+* æ›´æ–°è½¯ä»¶æº
 
 ```
 apt-get update
 ```
 
-* °²×°curl
+* å®‰è£…curl
 
 ```
 apt-get install curl -y
 ```
 
-* ÆôÓÃ BBR TCP ÓµÈû¿ØÖÆËã·¨
+* å¯ç”¨ BBR TCP æ‹¥å¡æ§åˆ¶ç®—æ³•
 
 ```
 echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
@@ -20,43 +20,43 @@ echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
 sysctl -p
 ```
 
-* °²×°nginx
+* å®‰è£…nginx
 
 ```
 apt-get install nginx -y
 ```
 
-* Ö¤ÊéÂ·¾¶
+* åˆ›å»ºè¯ä¹¦è·¯å¾„
 
 ```
 mkdir -p /root/certs
 ```
 
-* °²×°acme
+* å®‰è£…acme
 
 ```
 curl https://get.acme.sh | sh -s email=luntan609@hotmail.com
 ```
 
-* Ìí¼ÓÈíÁ´½Ó
+* æ·»åŠ è½¯é“¾æ¥
 
 ```
 ln -s /root/.acme.sh/acme.sh /usr/local/bin/acme.sh
 ```
 
-* ÇĞ»»CA»ú¹¹
+* åˆ‡æ¢CAæœºæ„
 
 ```
 acme.sh --set-default-ca --server letsencrypt
 ```
 
-* ÉêÇëÖ¤Êé
+* ç”³è¯·è¯ä¹¦
 
 ```
 acme.sh --issue -d example.com -w /var/www/html -k ec-256
 ```
 
-* °²×°Ö¤Êé
+* å®‰è£…è¯ä¹¦
 
 ```
 acme.sh --install-cert -d example.com \
@@ -65,22 +65,22 @@ acme.sh --install-cert -d example.com \
 --reloadcmd      "systemctl force-reload nginx"
 ```
 
-* ´´½¨nginxÅäÖÃ
+* åˆ›å»ºnginxé…ç½®
 
 ```
 nano /etc/nginx/conf.d/example.com.conf
 ```
 
-* ±à¼­nginxÅäÖÃ
+* ç¼–è¾‘nginxé…ç½®
 
 ```
 server {
 	listen 443 ssl;
 	listen [::]:443 ssl;
 	
-	server_name example.com;  #ÄãµÄÓòÃû
-	ssl_certificate       /root/certs/example.com/fullchain.crt;  #Ö¤ÊéÎ»ÖÃ
-	ssl_certificate_key   /root/certs/example.com/private.key;    #Ë½Ô¿Î»ÖÃ
+	server_name example.com;  #ä½ çš„åŸŸå
+	ssl_certificate       /root/certs/example.com/fullchain.crt;  #è¯ä¹¦ä½ç½®
+	ssl_certificate_key   /root/certs/example.com/private.key;    #ç§é’¥ä½ç½®
 	
 	ssl_session_timeout 1d;
 	ssl_session_cache shared:MozSSL:10m;
@@ -94,11 +94,11 @@ server {
 		proxy_redirect off;
 		proxy_pass http://127.0.0.1:5212;
 
-		# Èç¹ûÄúÒªÊ¹ÓÃ±¾µØ´æ´¢²ßÂÔ£¬Çë½«ÏÂÒ»ĞĞ×¢ÊÍ·ûÉ¾³ı£¬²¢¸ü¸Ä´óĞ¡ÎªÀíÂÛ×î´óÎÄ¼ş³ß´ç
+		# å¦‚æœæ‚¨è¦ä½¿ç”¨æœ¬åœ°å­˜å‚¨ç­–ç•¥ï¼Œè¯·å°†ä¸‹ä¸€è¡Œæ³¨é‡Šç¬¦åˆ é™¤ï¼Œå¹¶æ›´æ”¹å¤§å°ä¸ºç†è®ºæœ€å¤§æ–‡ä»¶å°ºå¯¸
 		# client_max_body_size 20000m;
 	}
 
-	# location /ray {   #·ÖÁ÷Â·¾¶
+	# location /ray {   #åˆ†æµè·¯å¾„
 		# proxy_redirect off;
 		# proxy_pass http://127.0.0.1:10000;
 		# proxy_http_version 1.1;
