@@ -36,7 +36,10 @@ acme.sh --install-cert -d example.com \
 --fullchain-file /root/certs/example.com/fullchain.crt \
 --reloadcmd      "systemctl force-reload nginx"
 
-cat > /etc/nginx/conf.d/example.com.conf << EOF
+# 创建nginx配置
+nano /etc/nginx/conf.d/example.com.conf
+
+# 编辑nginx配置
 server {
 	listen 443 ssl;
 	listen [::]:443 ssl;
@@ -52,25 +55,18 @@ server {
 	ssl_prefer_server_ciphers off;
 
 	location / {
-		proxy_pass https://bing.com; #伪装网址
-		proxy_redirect off;
-		proxy_ssl_server_name on;
-		sub_filter_once off;
-		sub_filter "bing.com" $server_name;
-		proxy_set_header Host "bing.com";
-		proxy_set_header Referer $http_referer;
-		proxy_set_header X-Real-IP $remote_addr;
-		proxy_set_header User-Agent $http_user_agent;
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-		proxy_set_header X-Forwarded-Proto https;
-		proxy_set_header Accept-Encoding "";
-		proxy_set_header Accept-Language "zh-CN";
-	}
+		proxy_set_header Host $http_host;
+		proxy_redirect off;
+		proxy_pass http://127.0.0.1:5212;
 
+		# 如果您要使用本地存储策略，请将下一行注释符删除，并更改大小为理论最大文件尺寸
+		# client_max_body_size 20000m;
+	}
 
 	# location /ray {   #分流路径
 		# proxy_redirect off;
-		# proxy_pass http://127.0.0.1:10000; #Xray端口
+		# proxy_pass http://127.0.0.1:10000;
 		# proxy_http_version 1.1;
 		# proxy_set_header Upgrade $http_upgrade;
 		# proxy_set_header Connection "upgrade";
@@ -89,5 +85,4 @@ server {
 			rewrite ^(.*)$ https://$host$1 permanent;
 		}
 }
-EOF
 ```
