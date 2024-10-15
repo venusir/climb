@@ -33,37 +33,46 @@ curl -fsSL https://raw.githubusercontent.com/filebrowser/get/master/get.sh | bas
 
 ```
 # 创建文件夹
+mkdir -p /etc/filebrowser
 mkdir -p /var/filebrowser
 mkdir -p /root/filebrowser
 
+# 创建配置文件
+touch /etc/filebrowser/filebrowser.db
+touch /var/filebrowser/log.log
+
 # 初始化配置
-filebrowser -d etc/filebrowser.db config init
+filebrowser -d /etc/filebrowser/filebrowser.db config init
 # 查看配置
-filebrowser -d etc/filebrowser.db config cat
+filebrowser -d /etc/filebrowser/filebrowser.db config cat
 
 # 设置监听端口（默认8080）
-filebrowser -d etc/filebrowser.db config set --port 8088
+filebrowser -d /etc/filebrowser/filebrowser.db config set --port 8088
 # 设置监听地址（默认127.0.0.1）
-filebrowser -d etc/filebrowser.db config set --address 127.0.0.1
+filebrowser -d /etc/filebrowser/filebrowser.db config set --address 127.0.0.1
 # 设置文件存放路径
-filebrowser -d etc/filebrowser.db config set --root /root/filebrowser
+filebrowser -d /etc/filebrowser/filebrowser.db config set --root /root/filebrowser
 # 设置数据库文件
-filebrowser -d etc/filebrowser.db config set --database /etc/filebrowser.db
+filebrowser -d /etc/filebrowser/filebrowser.db config set --database /etc/filebrowser/filebrowser.db
 # 设置日志文件（默认stdout）
-filebrowser -d etc/filebrowser.db config set --log /var/filebrowser/log.log
+filebrowser -d /etc/filebrowser/filebrowser.db config set --log /var/filebrowser/log.log
 # 设置语言（默认英文）
-filebrowser -d etc/filebrowser.db config set --locale zh-cn
+filebrowser -d /etc/filebrowser/filebrowser.db config set --locale zh-cn
 # 添加用户
-filebrowser -d etc/filebrowser.db users add username password
+filebrowser -d /etc/filebrowser/filebrowser.db users add username password
 ```
 
 * 启动
 
 ```
-filebrowser -d etc/filebrowser.db
+filebrowser -d /etc/filebrowser.db
 ```
 
 * 配置systemctl启动
+
+```
+nano /etc/systemd/system/filebrowser.service
+```
 
 ```
 [Unit]
@@ -73,7 +82,7 @@ After=network.target
 
 [Service]
 WorkingDirectory=/usr/local/bin
-ExecStart=/usr/local/bin/filebrowser -d etc/filebrowser.db
+ExecStart=/usr/local/bin/filebrowser -d /etc/filebrowser/filebrowser.db
 Restart=on-abnormal
 RestartSec=5s
 KillMode=mixed
@@ -83,6 +92,11 @@ StandardError=syslog
 
 [Install]
 WantedBy=multi-user.target
+```
+
+```
+# 重载 systemd
+systemctl daemon-reload
 ```
 
 * 服务管理
