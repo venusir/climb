@@ -1,45 +1,79 @@
 # Server
 
+* 更新软件源
+
 ```
-# 更新软件源
 apt-get update
+```
 
-# 安装curl
-apt-get install curl
+* 安装curl
 
-# 启用 BBR TCP 拥塞控制算法
+```
+apt-get install curl -y
+```
+
+* 启用 BBR TCP 拥塞控制算法
+
+```
 echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
 echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
 sysctl -p
+```
 
-# 安装nginx
-apt-get install nginx
+* 安装nginx
 
-# 证书路径
+```
+apt-get install nginx -y
+```
+
+* 证书路径
+
+```
 mkdir -p /root/certs
+```
 
-# 安装acme
+* 安装acme
+
+```
 curl https://get.acme.sh | sh -s email=luntan609@hotmail.com
+```
 
-# 添加软链接
+* 添加软链接
+
+```
 ln -s /root/.acme.sh/acme.sh /usr/local/bin/acme.sh
+```
 
-# 切换CA机构
+* 切换CA机构
+
+```
 acme.sh --set-default-ca --server letsencrypt
+```
 
-# 申请证书
+* 申请证书
+
+```
 acme.sh --issue -d example.com -w /var/www/html -k ec-256
+```
 
-# 安装证书
+* 安装证书
+
+```
 acme.sh --install-cert -d example.com \
 --key-file       /root/certs/example.com/private.key  \
 --fullchain-file /root/certs/example.com/fullchain.crt \
 --reloadcmd      "systemctl force-reload nginx"
+```
 
-# 创建nginx配置
+* 创建nginx配置
+
+```
 nano /etc/nginx/conf.d/example.com.conf
+```
 
-# 编辑nginx配置
+* 编辑nginx配置
+
+```
 server {
 	listen 443 ssl;
 	listen [::]:443 ssl;
