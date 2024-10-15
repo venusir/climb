@@ -47,7 +47,7 @@ filebrowser -d /etc/filebrowser/filebrowser.db config init
 filebrowser -d /etc/filebrowser/filebrowser.db config cat
 
 # 设置监听端口（默认8080）
-filebrowser -d /etc/filebrowser/filebrowser.db config set --port 8088
+filebrowser -d /etc/filebrowser/filebrowser.db config set --port 8080
 # 设置监听地址（默认127.0.0.1）
 filebrowser -d /etc/filebrowser/filebrowser.db config set --address 127.0.0.1
 # 设置文件存放路径
@@ -76,16 +76,14 @@ nano /etc/systemd/system/filebrowser.service
 
 ```
 [Unit]
-[Unit]
 Description=File browser
 After=network.target
 
 [Service]
-ExecStart=/usr/local/bin/filebrowser -d /etc/filebrowser/filebrowser.db
+ExecStart=/usr/local/bin/filebrowser -d /etc/filebrowser.db
 
 [Install]
 WantedBy=multi-user.target
-
 ```
 
 ```
