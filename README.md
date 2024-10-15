@@ -76,22 +76,16 @@ nano /etc/systemd/system/filebrowser.service
 
 ```
 [Unit]
-Description=File Browser
-After=syslog.target 
+[Unit]
+Description=File browser
 After=network.target
 
 [Service]
-WorkingDirectory=/usr/local/bin
 ExecStart=/usr/local/bin/filebrowser -d /etc/filebrowser/filebrowser.db
-Restart=on-abnormal
-RestartSec=5s
-KillMode=mixed
-
-StandardOutput=null
-StandardError=syslog
 
 [Install]
 WantedBy=multi-user.target
+
 ```
 
 ```
