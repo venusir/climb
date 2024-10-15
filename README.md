@@ -44,7 +44,7 @@ filebrowser -d etc/filebrowser.db config cat
 # 设置监听端口（默认8080）
 filebrowser -d etc/filebrowser.db config set --port 8088
 # 设置监听地址（默认127.0.0.1）
-filebrowser -d etc/filebrowser.db config set --address 192.168.8.11
+filebrowser -d etc/filebrowser.db config set --address 127.0.0.1
 # 设置文件存放路径
 filebrowser -d etc/filebrowser.db config set --root /root/filebrowser
 # 设置数据库文件
