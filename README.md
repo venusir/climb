@@ -1,9 +1,10 @@
-# Server
+## Server
 
+### 准备工作
 * 更新软件源
 
 ```
-apt-get update
+apt-get update && apt-get upgrade
 ```
 
 * 安装curl
@@ -20,49 +21,12 @@ echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
 sysctl -p
 ```
 
+### Nginx
+
 * 安装nginx
 
 ```
 apt-get install nginx -y
-```
-
-* 创建证书路径
-
-```
-mkdir -p /root/certs
-```
-
-* 安装acme
-
-```
-curl https://get.acme.sh | sh -s email=luntan609@hotmail.com
-```
-
-* 添加软链接
-
-```
-ln -s /root/.acme.sh/acme.sh /usr/local/bin/acme.sh
-```
-
-* 切换CA机构
-
-```
-acme.sh --set-default-ca --server letsencrypt
-```
-
-* 申请证书
-
-```
-acme.sh --issue -d example.com -w /var/www/html -k ec-256
-```
-
-* 安装证书
-
-```
-acme.sh --install-cert -d example.com \
---key-file       /root/certs/example.com/private.key  \
---fullchain-file /root/certs/example.com/fullchain.crt \
---reloadcmd      "systemctl force-reload nginx"
 ```
 
 * 创建nginx配置
@@ -119,4 +83,45 @@ server {
 			rewrite ^(.*)$ https://$host$1 permanent;
 		}
 }
+```
+
+### 证书申请
+
+* 创建证书路径
+
+```
+mkdir -p /root/certs
+```
+
+* 安装acme
+
+```
+curl https://get.acme.sh | sh -s email=luntan609@hotmail.com
+```
+
+* 添加软链接
+
+```
+ln -s /root/.acme.sh/acme.sh /usr/local/bin/acme.sh
+```
+
+* 切换CA机构
+
+```
+acme.sh --set-default-ca --server letsencrypt
+```
+
+* 申请证书
+
+```
+acme.sh --issue -d example.com -w /var/www/html -k ec-256
+```
+
+* 安装证书
+
+```
+acme.sh --install-cert -d example.com \
+--key-file       /root/certs/example.com/private.key  \
+--fullchain-file /root/certs/example.com/fullchain.crt \
+--reloadcmd      "systemctl force-reload nginx"
 ```
