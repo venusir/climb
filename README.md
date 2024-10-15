@@ -21,51 +21,59 @@ echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
 sysctl -p
 ```
 
-### 安装Cloudreve
+### 安装FileBrowser
 
-* 下载 cloudreve
-
-```
-wget -O cloudreve_3.8.3_linux_amd64.tar.gz https://github.com/cloudreve/Cloudreve/releases/download/3.8.3/cloudreve_3.8.3_linux_amd64.tar.gz
-```
-
-* 解压获取到的主程序
+* 安装 filebrowser
 
 ```
-tar -zxvf cloudreve_3.8.3_linux_amd64.tar.gz
+curl -fsSL https://raw.githubusercontent.com/filebrowser/get/master/get.sh | bash
 ```
 
-* 移动可执行文件
+* 配置
 
 ```
-mv cloudreve /usr/bin/
+# 创建文件夹
+mkdir -p /var/filebrowser
+mkdir -p /root/filebrowser
+
+# 初始化配置
+filebrowser -d etc/filebrowser.db config init
+# 查看配置
+filebrowser -d etc/filebrowser.db config cat
+
+# 设置监听端口（默认8080）
+filebrowser -d etc/filebrowser.db config set --port 8088
+# 设置监听地址（默认127.0.0.1）
+filebrowser -d etc/filebrowser.db config set --address 192.168.8.11
+# 设置文件存放路径
+filebrowser -d etc/filebrowser.db config set --root /root/filebrowser
+# 设置数据库文件
+filebrowser -d etc/filebrowser.db config set --database /etc/filebrowser.db
+# 设置日志文件（默认stdout）
+filebrowser -d etc/filebrowser.db config set --log /var/filebrowser/log.log
+# 设置语言（默认英文）
+filebrowser -d etc/filebrowser.db config set --locale zh-cn
+# 添加用户
+filebrowser -d etc/filebrowser.db users add username password
 ```
 
-* 获取可执行权限
+* 启动
 
 ```
-chmod +x /usr/bin/cloudreve
+filebrowser -d etc/filebrowser.db
 ```
 
-* 编辑配置文件
-
-```
-nano /usr/lib/systemd/system/cloudreve.service
-```
-
-* 编辑文件
+* 配置systemctl启动
 
 ```
 [Unit]
-Description=Cloudreve
-Documentation=https://docs.cloudreve.org
+Description=File Browser
+After=syslog.target 
 After=network.target
-After=mysqld.service
-Wants=network.target
 
 [Service]
-WorkingDirectory=/usr/bin
-ExecStart=/usr/bin/cloudreve
+WorkingDirectory=/usr/local/bin
+ExecStart=/usr/local/bin/filebrowser -d etc/filebrowser.db
 Restart=on-abnormal
 RestartSec=5s
 KillMode=mixed
@@ -80,14 +88,18 @@ WantedBy=multi-user.target
 * 服务管理
 
 ```
-# 更新配置
-systemctl daemon-reload
-
-# 启动服务
-systemctl start cloudreve
-
-# 设置开机启动
-systemctl enable cloudreve
+# 运行
+systemctl start filebrowser
+# 重启
+systemctl restart filebrowser
+# 停止运行
+systemctl stop filebrowser
+# 开机启动
+systemctl enable filebrowser
+# 取消开机启动
+systemctl disable filebrowser
+# 查看运行状态
+systemctl status filebrowser
 ```
 
 ### 安装Nginx
