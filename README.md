@@ -23,7 +23,7 @@ sysctl -p
 
 ### 安装Cloudreve
 
-* 下载 mosdns
+* 下载 cloudreve
 
 ```
 wget -O cloudreve_3.8.3_linux_amd64.tar.gz https://github.com/cloudreve/Cloudreve/releases/download/3.8.3/cloudreve_3.8.3_linux_amd64.tar.gz
