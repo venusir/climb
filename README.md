@@ -1,37 +1,24 @@
 ## Server
 
-### 准备工作
-* 更新软件源
+### Prepare
 
 ```
+# 更新软件源
 apt-get update && apt-get upgrade
-```
-
-* 安装curl
-
-```
+# 安装curl
 apt-get install curl -y
-```
-
-* 启用 BBR TCP 拥塞控制算法
-
-```
+# 启用 BBR TCP 拥塞控制算法
 echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
 echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
 sysctl -p
 ```
 
-### 安装FileBrowser
-
-* 安装 filebrowser
+### FileBrowser
 
 ```
+# 安装 filebrowser
 curl -fsSL https://raw.githubusercontent.com/filebrowser/get/master/get.sh | bash
-```
 
-* 配置
-
-```
 # 创建文件夹
 mkdir -p /etc/filebrowser
 mkdir -p /var/filebrowser
@@ -62,19 +49,9 @@ filebrowser -d /etc/filebrowser/filebrowser.db config set --locale zh-cn
 filebrowser -d /etc/filebrowser/filebrowser.db users add username password
 ```
 
-* 启动
-
 ```
-filebrowser -d /etc/filebrowser.db
-```
-
-* 配置systemctl启动
-
-```
-nano /etc/systemd/system/filebrowser.service
-```
-
-```
+# 配置systemctl启动
+cat > /etc/systemd/system/filebrowser.service << EOF
 [Unit]
 Description=File browser
 After=network.target
@@ -84,16 +61,12 @@ ExecStart=/usr/local/bin/filebrowser -d /etc/filebrowser.db
 
 [Install]
 WantedBy=multi-user.target
+EOF
 ```
 
 ```
 # 重载 systemd
 systemctl daemon-reload
-```
-
-* 服务管理
-
-```
 # 运行
 systemctl start filebrowser
 # 重启
@@ -108,7 +81,7 @@ systemctl disable filebrowser
 systemctl status filebrowser
 ```
 
-### 安装Nginx
+### Nginx
 
 * 安装nginx
 
