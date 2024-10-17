@@ -54,8 +54,20 @@ filebrowser -d /etc/filebrowser/filebrowser.db config set --log /var/filebrowser
 # 设置语言（默认英文）
 filebrowser -d /etc/filebrowser/filebrowser.db config set --locale zh-cn
 
+# 设置用户目录
+filebrowser -d /etc/filebrowser/filebrowser.db config se --scope /root/filebrowser
+
+# 显示用户
+filebrowser -d /etc/filebrowser/filebrowser.db users ls
+
 # 添加用户
-filebrowser -d /etc/filebrowser/filebrowser.db users add username password
+filebrowser -d /etc/filebrowser/filebrowser.db users add username password --perm.admin --scope /root/filebrowser
+
+# 删除用户
+filebrowser -d /etc/filebrowser/filebrowser.db users rm username
+
+# 更新密码
+filebrowser -d /etc/filebrowser/filebrowser.db users update username -p password
 ```
 
 ```
