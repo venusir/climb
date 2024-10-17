@@ -5,8 +5,10 @@
 ```
 # 更新软件源
 apt-get update && apt-get upgrade
+
 # 安装curl
 apt-get install curl -y
+
 # 启用 BBR TCP 拥塞控制算法
 echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
 echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
@@ -30,21 +32,28 @@ touch /var/filebrowser/log.log
 
 # 初始化配置
 filebrowser -d /etc/filebrowser/filebrowser.db config init
+
 # 查看配置
 filebrowser -d /etc/filebrowser/filebrowser.db config cat
 
 # 设置监听端口（默认8080）
 filebrowser -d /etc/filebrowser/filebrowser.db config set --port 8080
+
 # 设置监听地址（默认127.0.0.1）
 filebrowser -d /etc/filebrowser/filebrowser.db config set --address 127.0.0.1
+
 # 设置文件存放路径
 filebrowser -d /etc/filebrowser/filebrowser.db config set --root /root/filebrowser
+
 # 设置数据库文件
 filebrowser -d /etc/filebrowser/filebrowser.db config set --database /etc/filebrowser/filebrowser.db
+
 # 设置日志文件（默认stdout）
 filebrowser -d /etc/filebrowser/filebrowser.db config set --log /var/filebrowser/log.log
+
 # 设置语言（默认英文）
 filebrowser -d /etc/filebrowser/filebrowser.db config set --locale zh-cn
+
 # 添加用户
 filebrowser -d /etc/filebrowser/filebrowser.db users add username password
 ```
@@ -67,44 +76,41 @@ EOF
 ```
 # 重载 systemd
 systemctl daemon-reload
+
 # 运行
 systemctl start filebrowser
+
 # 重启
 systemctl restart filebrowser
+
 # 停止运行
 systemctl stop filebrowser
+
 # 开机启动
 systemctl enable filebrowser
+
 # 取消开机启动
 systemctl disable filebrowser
+
 # 查看运行状态
 systemctl status filebrowser
 ```
 
 ### Nginx
 
-* 安装nginx
-
 ```
+# 安装nginx
 apt-get install nginx -y
-```
 
-* 创建nginx配置
-
-```
-nano /etc/nginx/conf.d/example.com.conf
-```
-
-* 编辑nginx配置
-
-```
+# 创建nginx配置
+cat > /etc/nginx/conf.d/example.com.conf << "EOF"
 server {
 	listen 443 ssl;
 	listen [::]:443 ssl;
 	
 	server_name example.com;  #你的域名
-	ssl_certificate       /root/certs/example.com/fullchain.crt;  #证书位置
-	ssl_certificate_key   /root/certs/example.com/private.key;    #私钥位置
+	ssl_certificate       /root/certs/example.com/fullchain.pem;  #证书位置
+	ssl_certificate_key   /root/certs/example.com/private.pem;    #私钥位置
 	
 	ssl_session_timeout 1d;
 	ssl_session_cache shared:MozSSL:10m;
@@ -143,45 +149,29 @@ server {
 			rewrite ^(.*)$ https://$host$1 permanent;
 		}
 }
+EOF
 ```
 
-### 证书申请
-
-* 创建证书路径
-
+### Certificate
 ```
-mkdir -p /root/certs
-```
+# 创建证书路径
+mkdir -p /root/certs/example.com
 
-* 安装acme
-
-```
+# 安装acme
 curl https://get.acme.sh | sh -s email=luntan609@hotmail.com
-```
 
-* 添加软链接
-
-```
+# 添加软链接
 ln -s /root/.acme.sh/acme.sh /usr/local/bin/acme.sh
-```
 
-* 切换CA机构
-
-```
+# 切换CA机构
 acme.sh --set-default-ca --server letsencrypt
-```
 
-* 申请证书
-
-```
+# 申请证书
 acme.sh --issue -d example.com -w /var/www/html -k ec-256
-```
 
-* 安装证书
-
-```
+# 安装证书
 acme.sh --install-cert -d example.com \
---key-file       /root/certs/example.com/private.key  \
---fullchain-file /root/certs/example.com/fullchain.crt \
+--key-file       /root/certs/example.com/private.pem  \
+--fullchain-file /root/certs/example.com/fullchain.pem \
 --reloadcmd      "systemctl force-reload nginx"
 ```
