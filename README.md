@@ -61,7 +61,7 @@ filebrowser -d /etc/filebrowser/filebrowser.db config se --scope /root/filebrows
 filebrowser -d /etc/filebrowser/filebrowser.db users ls
 
 # 添加用户
-filebrowser -d /etc/filebrowser/filebrowser.db users add username password --perm.admin --scope /root/filebrowser
+filebrowser -d /etc/filebrowser/filebrowser.db users add username password
 
 # 删除用户
 filebrowser -d /etc/filebrowser/filebrowser.db users rm username
