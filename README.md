@@ -55,7 +55,7 @@ filebrowser -d /etc/filebrowser/filebrowser.db config set --log /var/filebrowser
 filebrowser -d /etc/filebrowser/filebrowser.db config set --locale zh-cn
 
 # 设置用户目录
-filebrowser -d /etc/filebrowser/filebrowser.db config se --scope /root/filebrowser
+filebrowser -d /etc/filebrowser/filebrowser.db config set --scope /root/filebrowser
 
 # 显示用户
 filebrowser -d /etc/filebrowser/filebrowser.db users ls
