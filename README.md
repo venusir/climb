@@ -1,40 +1,3 @@
-## LXC
-
-### 开启Tun
-> 在 pve 宿主中, 确认 `/dev/net/tun` 存在并获取对应的信息, 具体命令和返回如下
-
-```
-root@pve:~# ls -al /dev/net/tun
-crw-rw-rw- 1 root root 10, 200 Jun 30 23:08 /dev/net/tun
-```
-
-> 记录其中的 `10, 200` 这两个数字, 后面需要用到.
-> 然后修改 `/etc/pve/lxc/CTID.conf` 文件, 新增如下两行
-
-```
-lxc.cgroup2.devices.allow: c 10:200 rwm
-lxc.mount.entry: /dev/net/tun dev/net/tun none bind,create=file
-```
-
-> 上面的 `10:200` 需要和前面使用 `ls -al /dev/net/tun` 获取的结果对应起来.
-
-### 开启IP转发
-
-> 开启 lxc 的 IP 转发功能
-
-> 编辑 `/etc/sysctl.conf` 文件, 将以下两行的注释去掉. 如果没有这两行, 需要添加
-
-```
-net.ipv4.ip_forward=1
-net.ipv6.conf.all.forwarding=1
-```
-
-> 编辑完成后, 使用 `sysctl` 命令 reload
-
-```
-sysctl -p /etc/sysctl.conf
-```
-
 ## Server
 
 ### Prepare
@@ -223,4 +186,43 @@ acme.sh --install-cert -d venusir.cc \
 --key-file       /root/certs/venusir.cc/private.pem  \
 --fullchain-file /root/certs/venusir.cc/fullchain.pem \
 --reloadcmd      "systemctl force-reload nginx"
+```
+
+## Client
+
+### PVE-LXC
+
+#### 开启Tun
+> 在 pve 宿主中, 确认 `/dev/net/tun` 存在并获取对应的信息, 具体命令和返回如下
+
+```
+root@pve:~# ls -al /dev/net/tun
+crw-rw-rw- 1 root root 10, 200 Jun 30 23:08 /dev/net/tun
+```
+
+> 记录其中的 `10, 200` 这两个数字, 后面需要用到.
+> 然后修改 `/etc/pve/lxc/CTID.conf` 文件, 新增如下两行
+
+```
+lxc.cgroup2.devices.allow: c 10:200 rwm
+lxc.mount.entry: /dev/net/tun dev/net/tun none bind,create=file
+```
+
+> 上面的 `10:200` 需要和前面使用 `ls -al /dev/net/tun` 获取的结果对应起来.
+
+#### 开启IP转发
+
+> 开启 lxc 的 IP 转发功能
+
+> 编辑 `/etc/sysctl.conf` 文件, 将以下两行的注释去掉. 如果没有这两行, 需要添加
+
+```
+net.ipv4.ip_forward=1
+net.ipv6.conf.all.forwarding=1
+```
+
+> 编辑完成后, 使用 `sysctl` 命令 reload
+
+```
+sysctl -p /etc/sysctl.conf
 ```
