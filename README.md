@@ -115,14 +115,14 @@ systemctl status filebrowser
 apt-get install nginx -y
 
 # 创建nginx配置
-cat > /etc/nginx/conf.d/venusir.cc.conf << "EOF"
+cat > /etc/nginx/conf.d/example.com.conf << "EOF"
 server {
 	listen 443 ssl;
 	listen [::]:443 ssl;
 	
-	server_name venusir.cc;  #你的域名
-	ssl_certificate       /root/certs/venusir.cc/fullchain.pem;  #证书位置
-	ssl_certificate_key   /root/certs/venusir.cc/private.pem;    #私钥位置
+	server_name example.com;  #你的域名
+	ssl_certificate       /root/certs/example.com/fullchain.pem;  #证书位置
+	ssl_certificate_key   /root/certs/example.com/private.pem;    #私钥位置
 	
 	ssl_session_timeout 1d;
 	ssl_session_cache shared:MozSSL:10m;
@@ -167,7 +167,7 @@ EOF
 ### Certificate
 ```
 # 创建证书路径
-mkdir -p /root/certs/venusir.cc
+mkdir -p /root/certs/example.com
 
 # 安装acme
 curl https://get.acme.sh | sh -s email=luntan609@hotmail.com
@@ -179,12 +179,12 @@ ln -s /root/.acme.sh/acme.sh /usr/local/bin/acme.sh
 acme.sh --set-default-ca --server letsencrypt
 
 # 申请证书
-acme.sh --issue -d venusir.cc -w /var/www/html -k ec-256
+acme.sh --issue -d example.com -w /var/www/html -k ec-256
 
 # 安装证书
-acme.sh --install-cert -d venusir.cc \
---key-file       /root/certs/venusir.cc/private.pem  \
---fullchain-file /root/certs/venusir.cc/fullchain.pem \
+acme.sh --install-cert -d example.com \
+--key-file       /root/certs/example.com/private.pem  \
+--fullchain-file /root/certs/example.com/fullchain.pem \
 --reloadcmd      "systemctl force-reload nginx"
 ```
 
@@ -193,36 +193,27 @@ acme.sh --install-cert -d venusir.cc \
 ### PVE-LXC
 
 #### 开启Tun
-> 在 pve 宿主中, 确认 `/dev/net/tun` 存在并获取对应的信息, 具体命令和返回如下
 
 ```
-root@pve:~# ls -al /dev/net/tun
-crw-rw-rw- 1 root root 10, 200 Jun 30 23:08 /dev/net/tun
-```
+# 在 pve 宿主中, 确认 `/dev/net/tun` 存在并获取对应的信息, 命令
+ls -al /dev/net/tun
 
-> 记录其中的 `10, 200` 这两个数字, 后面需要用到.
-> 然后修改 `/etc/pve/lxc/CTID.conf` 文件, 新增如下两行
+# 返回如下
+# crw-rw-rw- 1 root root 10, 200 Jun 30 23:08 /dev/net/tun
 
-```
-lxc.cgroup2.devices.allow: c 10:200 rwm
-lxc.mount.entry: /dev/net/tun dev/net/tun none bind,create=file
-```
+# 记录其中的 `10, 200` 这两个数字, 后面需要用到.
+# 然后修改 `/etc/pve/lxc/CTID.conf` 文件, 新增如下两行
 
-> 上面的 `10:200` 需要和前面使用 `ls -al /dev/net/tun` 获取的结果对应起来.
+echo "lxc.cgroup2.devices.allow: c 10:200 rwm" >> /etc/pve/lxc/CTID.conf
+echo "lxc.mount.entry: /dev/net/tun dev/net/tun none bind,create=file" >> /etc/pve/lxc/CTID.conf
+
+# 上面的 `10:200` 需要和前面使用 `ls -al /dev/net/tun` 获取的结果对应起来.
+```
 
 #### 开启IP转发
 
-> 开启 lxc 的 IP 转发功能
-
-> 编辑 `/etc/sysctl.conf` 文件, 将以下两行的注释去掉. 如果没有这两行, 需要添加
-
 ```
-net.ipv4.ip_forward=1
-net.ipv6.conf.all.forwarding=1
-```
-
-> 编辑完成后, 使用 `sysctl` 命令 reload
-
-```
-sysctl -p /etc/sysctl.conf
+echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
+echo "net.ipv6.conf.all.forwarding=1" >> /etc/sysctl.conf
+sysctl -p
 ```
