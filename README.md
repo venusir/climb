@@ -190,9 +190,7 @@ acme.sh --install-cert -d example.com \
 
 ## Client
 
-### PVE-LXC
-
-#### 开启Tun
+### PVE-LXC开启Tun
 
 ```
 # 在 pve 宿主中, 确认 `/dev/net/tun` 存在并获取对应的信息, 命令
@@ -210,7 +208,7 @@ echo "lxc.mount.entry: /dev/net/tun dev/net/tun none bind,create=file" >> /etc/p
 # 上面的 `10:200` 需要和前面使用 `ls -al /dev/net/tun` 获取的结果对应起来.
 ```
 
-#### 开启IP转发
+### 开启IP转发
 
 ```
 echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
